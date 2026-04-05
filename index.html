@@ -667,6 +667,13 @@ document.addEventListener('DOMContentLoaded', () => {
         cNodes.forEach(n => { n.classList.remove('selected'); });
         node.classList.add('selected');
 
+        /* Sync mobile strip selection */
+        const mobileItems = document.querySelectorAll('.wv-mobile-item');
+        const nodeIdx = Array.from(cNodes).indexOf(node);
+        mobileItems.forEach((el, i) => {
+            el.classList.toggle('selected', i === nodeIdx);
+        });
+
         const name = node.querySelector('.node-label').textContent;
         const img = node.dataset.img;
         const quote = node.dataset.quote;
@@ -712,6 +719,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (cNodes.length) selectDestination(cNodes[0], false);
+
+    /* ─── WANDERLUST: mobile horizontal strip ─── */
+    const wvLeft = document.querySelector('.wv-left');
+    if (wvLeft && cNodes.length) {
+        const strip = document.createElement('div');
+        strip.className = 'wv-mobile-strip';
+
+        cNodes.forEach((node, i) => {
+            const item = document.createElement('div');
+            item.className = 'wv-mobile-item' + (i === 0 ? ' selected' : '');
+            const thumb = document.createElement('img');
+            thumb.src = node.querySelector('.node-thumb img').src;
+            thumb.alt = node.querySelector('.node-label').textContent;
+            const label = document.createElement('span');
+            label.textContent = node.querySelector('.node-label').textContent;
+            item.appendChild(thumb);
+            item.appendChild(label);
+
+            item.addEventListener('click', () => {
+                strip.querySelectorAll('.wv-mobile-item').forEach(el => el.classList.remove('selected'));
+                item.classList.add('selected');
+                selectDestination(node, true);
+            });
+
+            strip.appendChild(item);
+        });
+
+        wvLeft.appendChild(strip);
+    }
 
     const codePeekReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
