@@ -435,13 +435,11 @@ img {
     position: relative;
 }
 
-/* Vertical timeline: centered on logo circles (padding-left 20px + half of 44px logo) */
-.journey-track::before {
-    content: '';
+/* Vertical timeline line — real element to cover full scroll height */
+.journey-timeline {
     position: absolute;
-    left: calc(20px + 22px);
+    left: calc(2px + 20px + 22px);
     top: 0;
-    bottom: 0;
     width: 0;
     border-left: 1px dashed rgba(201, 169, 110, 0.35);
     z-index: 0;
@@ -463,6 +461,7 @@ img {
     transition: opacity 0.4s ease, transform 0.4s var(--ease-out);
     border-left: 2px solid transparent;
     position: relative;
+    z-index: 1;
     /* Scale from logo center so circles stay on the timeline */
     transform-origin: calc(20px + 22px) 50%;
 }
@@ -485,6 +484,8 @@ img {
     justify-content: center;
     background: #fff;
     transition: border-color 0.3s ease;
+    position: relative;
+    z-index: 1;
 }
 
 .journey-item.active .journey-item-logo {
@@ -606,84 +607,191 @@ img {
 }
 
 .thoughts-list {
-    max-width: 900px;
+    max-width: 960px;
     margin: 0 auto;
-    padding: 0 clamp(24px, 8vw, 120px);
+    padding: 0 clamp(24px, 4vw, 60px);
+    font-family: var(--font-mono);
+}
+
+/* Override standard reveal — typing animation handles visibility */
+.thoughts-list.reveal {
+    opacity: 1;
+    transform: none;
+}
+
+/* Terminal frame wrapping the file tree */
+.thoughts-terminal {
+    border: 1px solid rgba(201, 169, 110, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.thoughts-terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 36px;
+    padding: 0 14px;
+    background: rgba(201, 169, 110, 0.05);
+    border-bottom: 1px solid rgba(201, 169, 110, 0.12);
+}
+
+.thoughts-terminal-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1px solid rgba(201, 169, 110, 0.3);
+    background: none;
+}
+
+.thoughts-terminal-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: rgba(201, 169, 110, 0.4);
+    margin-left: auto;
+}
+
+.thoughts-terminal-body {
+    padding: 20px 24px;
+}
+
+/* Command line */
+.tree-command {
+    margin-bottom: 12px;
+    padding-left: 2px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
+.tree-prompt {
+    color: var(--accent);
+    margin-right: 2px;
+}
+
+.tree-cmd-text {
+    color: var(--accent);
+}
+
+/* Tree items container with vertical connector */
+.tree-items {
+    position: relative;
+    padding-left: 0;
+}
+
+/* Vertical line from first item to last — aligned with the │ in ├── */
+.tree-items::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+}
+
+/* Tree items hidden until animated in */
+.thought-item {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s ease, transform 0.35s var(--ease-out), background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.thought-item.tree-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Tree branch characters */
+.tree-branch {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.25);
+    flex-shrink: 0;
+    width: 36px;
+    user-select: none;
+    line-height: 1;
+    transition: color 0.3s ease;
 }
 
 .thought-item {
     display: flex;
-    align-items: center;
-    gap: 28px;
-    padding: 36px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 0;
     color: var(--text-light);
     text-decoration: none;
-    transition: opacity 0.3s ease;
+    transition: background 0.3s ease;
     position: relative;
-}
-
-.thought-item:first-child {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    padding-left: 8px;
+    margin-left: -8px;
+    padding-right: 12px;
 }
 
 .thought-item:hover {
+    background: rgba(201, 169, 110, 0.06);
     opacity: 1;
-}
-
-.thought-item::before {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--accent);
-    transition: width 0.6s var(--ease-out);
-}
-
-.thought-item:hover::before {
-    width: 100%;
-}
-
-.thought-index {
-    font-family: var(--font-display);
-    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    color: transparent;
-    -webkit-text-stroke: 1px var(--accent);
-    paint-order: stroke fill;
-    flex-shrink: 0;
-    width: 60px;
 }
 
 .thought-body {
     flex: 1;
+    min-width: 0;
 }
 
 .thought-body h3 {
-    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
     margin-bottom: 6px;
+    color: var(--text-light);
+    transition: color 0.3s ease;
 }
 
 .thought-body p {
-    font-size: 0.9rem;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
     color: var(--text-muted);
-    line-height: 1.5;
+    line-height: 1.6;
+}
+
+/* Expand preview on hover */
+.tree-meta {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s var(--ease-out), opacity 0.3s ease, margin 0.4s var(--ease-out);
+    margin-top: 0;
+}
+
+.thought-item:hover .tree-meta {
+    max-height: 30px;
+    opacity: 1;
+    margin-top: 8px;
 }
 
 .thought-arrow {
     font-size: 1.4rem;
     color: var(--accent);
     flex-shrink: 0;
-    transition: transform 0.3s var(--ease-out);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.3s ease, transform 0.3s var(--ease-out);
+    margin-top: 2px;
 }
 
 .thought-item:hover .thought-arrow {
-    transform: translateX(6px);
+    opacity: 1;
+    transform: translateX(0);
 }
 
 /* ═══════════════════════════════════════════
@@ -1024,6 +1132,44 @@ img {
     text-align: left;
 }
 
+/* ── Terminal style (frameless) ── */
+.ethos-terminal {
+    padding: 0;
+}
+
+.terminal-body {
+    padding: 0;
+}
+
+.terminal-body p {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.85;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    text-align: left;
+}
+
+.terminal-body p:last-child {
+    margin-bottom: 0;
+}
+
+.terminal-prompt {
+    color: var(--accent);
+    margin-right: 8px;
+    user-select: none;
+}
+
+.terminal-cursor {
+    color: var(--accent);
+    animation: termBlink 1s step-end infinite;
+}
+
+@keyframes termBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
 .ethos-detail p {
     font-size: 0.95rem;
     line-height: 1.75;
@@ -1272,9 +1418,16 @@ img {
     transform: translateX(0);
 }
 
-/* stagger thought items */
-.thought-item:nth-child(2) { transition-delay: 0.08s; }
-.thought-item:nth-child(3) { transition-delay: 0.16s; }
+
+/* ═══════════════════════════════════════════
+   FOCUS VISIBLE (Keyboard Navigation)
+   ═══════════════════════════════════════════ */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
 
 /* ═══════════════════════════════════════════
    RESPONSIVE
@@ -1347,13 +1500,6 @@ img {
         height: 200px;
     }
 
-    /* Ensure timeline line covers full scroll content */
-    .journey-track::before {
-        bottom: 0;
-        min-height: 100%;
-        height: auto;
-    }
-
     .journey-detail {
         min-height: 260px;
     }
@@ -1367,29 +1513,13 @@ img {
     }
 
     /* Thoughts */
-    .thought-item {
-        flex-wrap: nowrap;
-        gap: 16px;
-        align-items: center;
-        padding-right: 12px;
-    }
-
-    .thought-index {
-        width: 40px;
-        flex-shrink: 0;
-    }
-
-    .thought-body {
-        text-align: left;
-        flex: 1;
-        min-width: 0;
+    .tree-branch {
+        width: 28px;
+        font-size: 12px;
     }
 
     .thought-arrow {
-        position: static;
-        transform: none;
-        flex-shrink: 0;
-        margin-left: auto;
+        display: none;
     }
 
     /* Wanderlust: horizontal scroll strip on mobile */
