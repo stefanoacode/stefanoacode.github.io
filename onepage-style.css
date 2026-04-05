@@ -864,6 +864,11 @@ img {
     opacity: 1;
 }
 
+/* Mobile destination strip — hidden on desktop */
+.wv-mobile-strip {
+    display: none;
+}
+
 /* Right: large image, detail copy below */
 .wv-preview {
     width: 100%;
@@ -1342,6 +1347,13 @@ img {
         height: 200px;
     }
 
+    /* Ensure timeline line covers full scroll content */
+    .journey-track::before {
+        bottom: 0;
+        min-height: 100%;
+        height: auto;
+    }
+
     .journey-detail {
         min-height: 260px;
     }
@@ -1356,36 +1368,110 @@ img {
 
     /* Thoughts */
     .thought-item {
-        flex-wrap: wrap;
-        gap: 12px;
+        flex-wrap: nowrap;
+        gap: 16px;
+        align-items: center;
+        padding-right: 12px;
     }
 
     .thought-index {
-        width: auto;
+        width: 40px;
+        flex-shrink: 0;
+    }
+
+    .thought-body {
+        text-align: left;
+        flex: 1;
+        min-width: 0;
     }
 
     .thought-arrow {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
+        position: static;
+        transform: none;
+        flex-shrink: 0;
+        margin-left: auto;
     }
 
-    /* Wanderlust: stack — shapes, then image + text */
+    /* Wanderlust: horizontal scroll strip on mobile */
     .wv-viewer {
         flex-direction: column;
-        gap: 36px;
+        gap: 28px;
     }
 
     .wv-left {
         width: 100%;
-        max-width: 440px;
-        margin: 0 auto;
+        max-width: none;
+        margin: 0;
     }
 
+    /* Hide constellation map, show horizontal strip instead */
     .constellation {
-        min-height: 240px;
-        aspect-ratio: 5 / 4;
+        display: none;
+    }
+
+    .wv-left {
+        display: block;
+        overflow: visible;
+    }
+
+    /* Mobile destination strip */
+    .wv-mobile-strip {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding: 8px clamp(24px, 4vw, 60px) 8px;
+        margin: 0 calc(-1 * clamp(24px, 4vw, 60px));
+    }
+
+    .wv-mobile-strip::-webkit-scrollbar {
+        display: none;
+    }
+
+    .wv-mobile-strip .wv-mobile-item {
+        scroll-snap-align: center;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.3s ease, transform 0.3s var(--ease-out);
+    }
+
+    .wv-mobile-strip .wv-mobile-item.selected {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+
+    .wv-mobile-strip .wv-mobile-item img {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(201, 169, 110, 0.25);
+        transition: border-color 0.3s ease;
+    }
+
+    .wv-mobile-strip .wv-mobile-item.selected img {
+        border-color: var(--accent);
+        box-shadow: 0 0 12px rgba(201, 169, 110, 0.3);
+    }
+
+    .wv-mobile-strip .wv-mobile-item span {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted-dark);
+        white-space: nowrap;
+    }
+
+    .wv-mobile-strip .wv-mobile-item.selected span {
+        color: var(--text-dark);
     }
 
     .wv-preview {
